@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Secretary :: The power of Jinja in Libre/OpenOffice</title>
+
+        <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootswatch/3.1.1/readable/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/0.0.1/prism.css" />
+
+        <style>
+            body { padding-bottom: 2em; }
+            .docs-container { max-width: 800px }
+            .bs-callout     { margin-bottom: 4rem; }
+            .bs-callout p   { margin-bottom: 0px; }
+            pre[class*="language-"] { margin-bottom: 22px }
+            pre[class*='language-'] > code[data-language] { overflow: auto }
+        </style>
+    </head>
+    <body>
+        <header class="navbar ndocs-nav" role="banner">
+            <div class="container">
+                <div class="navbar-header">
+                    <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a href="#" class="navbar-brand" alt="Less">Secretary</a>
+                </div>
+                <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">GitHub <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li> <a href="https://github.com/christopher-ramirez/secretary">Official Repo</a> </li>
+                                <li> <a href="https://github.com/christopher-ramirez/secretary/issues?state=open">Issues</a> </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+
+
+        <div class="jumbotron">
+            <div class="container master-head">
+              <h1>Secretary</h1>
+              <p class="lead">Take the power of Jinja2 templates to OpenOffice and LibreOffice and create reports in your web applications.</p>
+            </div>
+        </div>
+
+        <div class="container docs-container text-justify">
+            <p class="lead">Secretary is an alternative solution for creating office documents and reports in OpenDocument Text format from templates that can be visually composed using the OpenOffice.org/LibreOffice Writer word processor.</p>
+
+            <p class="lead">Secretary use the <a href="http://jinja.pocoo.org/docs/templates/" target="_blank">semantics of jinja2 templates</a> to render ODT files. Most features in jinja can be used into your ODT templates including variable printing, filters and flow control.</p>
+
+            <p class="lead">Rendered documents are produced in ODT format, and can then be converted to PDF, MS Word or other supported formats using the UNO Bridge or a library like <a href="https://github.com/mirkonasato/pyodconverter" target="_blank">PyODConverter</a></p>
+
+            <p>&nbsp;</p>
+
+            <h2>Features</h2>
+            <ul>
+                <li>
+                    <div class="bs-callout">
+                        <h4>WYSIWYG template composing</h4>
+                        <p>Compose templates in Writter. Secretary will keep original formating.</p>
+                    </div>
+                </li>
+
+                <li>
+                    <div class="bs-callout">
+                        <h4>No LibreOffice install required</h4>
+                        <p>Secretary works at file level so no binary installation is required.</p>
+                    </div>
+                </li>
+
+                <li>
+                    <div class="bs-callout">
+                        <h4>Use familiar template semantics</h4>
+                        <p>Many Python Web frameworks use jinja2 templates or similiars, like Django templates.</p>
+                    </div>
+                </li>
+
+                <li>
+                    <div class="bs-callout">
+                        <h4>Use jinja2 filters or create your owns</h4>
+                        <p>Use filters you are already familiar with, or create your owns! Secretay include native support for Markdown throught the <code>markdown</code> filter.</p>
+                    </div>
+                </li>
+            </ul>
+
+            <hr>
+
+            <h2>Installing<h2>
+            <h3 class="text-center">
+                <code>$ pip install secretary</code> <br />
+                <small class="muted">That's simple!</small>
+            </h3>
+            <p>Alternatively you can also clone <a href="https://github.com/christopher-ramirez/secretary">the official repo</a> and work with it.
+
+            <hr>
+
+            <h2>Basic Usage</h2>
+            <p class="lead">Secretary implements a class called <code>Render</code>. It takes a single argument called <code>template</code> which can be a filename or a file object. The file most be an ODT document that will be used as template</p>
+<pre>
+<code class="language-python">
+from secreatary import Render
+
+engine = Render(template)
+result = engine.render(foo=foo, bar=bar)
+</code>
+</pre>
+
+            <p class="lead">To render a template create an instance of class <code>Render</code> and call the instance's method <code>render</code> passing the template variables as keyword arguments. The function will return the rendered document in binary format.</p>
+
+            <p class="lead">You can configure the internal jinja2 engine through the <code>environment</code> property of a <code>Render</code> instance. <code>environment</code> is an instance of <a href="http://jinja.pocoo.org/docs/api/#jinja2.Environment">Environment</a>. This is how you would add a custom filter:</p>
+<pre>
+<code class="language-python">
+engine = Render(template)
+
+# Configure custom application filters
+engine.environment.filters['custom_filer'] = filter_function
+result = engine.render(foo=foo, bar=bar)
+</code>
+</pre>
+
+            <hr>
+
+            <h2>Composing Templates</h2>
+            <p class="lead">Secretary templates are simple ODT documents. You can create them using Writer. An OpenDocument file is basically a ZIP archive containing some XML files.</p>
+
+            <p class="lead">Template instructions (printing and flow control) should be added through <b>Input Fields</b>. In Writer you insert input fields from <i>Menu</i> > <i>Insert</i> > <i>Fields</i> > <i>Other...</i> or just press <code>CTRL + F2</code>. Then select <b>Functions</b> tab and select <b>Input Field</b> from the list on the left. Finally click <b>Insert</b> button and a dialog will appear where you can type template instructions.</p>
+
+            <h3>Printing Variables</h3>
+            <p class="lead">In the <i>Input Field</i> dialog type <code>{{ variable }}</code> to print te content of </i>variable</i> into the final document.</p>
+        </div>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+        <script src="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/0.0.1/prism.js"></script>
+    </body>
+</html>
