@@ -90,14 +90,13 @@ def transform_footnotes(render, xml_object, footnote_node):
                 sup_node = sup
                 break
         if sup_node:
-            # import pdb; pdb.set_trace()
             sup_node.parentNode.replaceChild(note, sup_node)
 
     footnote_node.parentNode.removeChild(footnote_node)
     return None
 
 
-def transform_code(render, xml_object, pre_node):
+def transform_pre(render, xml_object, pre_node):
     odt_node = xml_object.createElement('text:p')
     odt_node.setAttribute('text:style-name', 'codehilite')
 
@@ -109,6 +108,40 @@ def transform_code(render, xml_object, pre_node):
 
     pre_node.removeChild(code_node)
     return odt_node
+
+
+def transform_code(render, xml_object, code_node):
+    odt_node = xml_object.createElement('text:p')
+    odt_node.setAttribute('text:style-name', 'codehilite')
+
+    text_node = code_node.firstChild
+    odt_node.appendChild(text_node)
+    return odt_node
+
+
+def transform_table(render, xml_object, table_node):
+    odt_node = xml_object.createElement('table:table')
+    odt_node.setAttribute('table:style-name', 'Table')
+    odt_column = xml_object.createElement('table:table-column')
+    odt_node.appendChild(odt_column)
+
+    for table_row in table_node.getElementsByTagName('tr'):
+        table_cells = table_row.getElementsByTagName('td') + table_row.getElementsByTagName('th')
+        odt_column.setAttribute('table:number-columns-repeated', str(len(table_cells)))
+        odt_row = xml_object.createElement('table:table-row')
+        odt_node.appendChild(odt_row)
+        for table_cell in table_cells:
+            odt_cell = xml_object.createElement('table:table-cell')
+            odt_cell.setAttribute('office:value-type', 'string')
+            odt_row.appendChild(odt_cell)
+
+            paragraph_node = xml_object.createElement('p')
+            odt_cell.appendChild(paragraph_node)
+            for child in table_cell.childNodes:
+                paragraph_node.appendChild(child)
+    table_node.parentNode.replaceChild(odt_node, table_node)
+    return None
+
 
 def attribute_class(html_node):
     return html_node.getAttribute('class')
